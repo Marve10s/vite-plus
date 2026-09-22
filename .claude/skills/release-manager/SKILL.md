@@ -426,6 +426,7 @@ The full package document can update before npm's separately cached installation
      ```
 
    - Keep the review draft, body-only notes file, and live release aligned after requested edits. Read back the live title and body to verify the update. Normalize CRLF and LF before comparing the approved file with the live body, because GitHub can change line endings. Re-run the step 3 validation greps, plus `grep -c 'Merging this PR'` (must be 0).
+   - For a SemVer prerelease, confirm that GitHub marks the release as a prerelease. The automated release can create a prerelease tag without setting that flag. Add `--prerelease` when applying the approved notes, then verify `isPrerelease` with `gh release view vX.Y.Z --json isPrerelease`.
 
 2. **Verify**:
 
@@ -441,7 +442,9 @@ The full package document can update before npm's separately cached installation
 
    `vp upgrade` requires a standalone installation; `vp update` is not a substitute because it updates project dependencies. Resolve the intended binary and query its roots with `VP_DUMP_DIRS=1`; installations can use split XDG/platform roots, an explicit `VP_HOME`, or the legacy `~/.vite-plus` directory. Remove temporary overrides left by preview/control runs, while preserving the intended installation's configuration.
 
-   If the user's installation points to `local-dev-*` or is managed by another tool, test an isolated copy of the previous published installation under an explicit `VP_HOME`. Repoint any absolute symlinks in the copy to the copied root before testing. Label the result as an isolated upgrade; preserve the development installation and the original control used for regression tests. Run the selected binary outside a project so a local CLI cannot take over:
+   If the user's installation points to `local-dev-*` or is managed by another tool, test an isolated copy of the previous published installation under an explicit `VP_HOME`. Repoint any absolute symlinks in the copy to the copied root before testing. Label the result as an isolated upgrade; preserve the development installation and the original control used for regression tests.
+
+   Isolate shell startup as well as Vite+ storage. `VP_HOME` alone does not prevent setup from editing the user's real shell profiles, and an upgrade handoff can start a shell that selects another installation from those profiles. Set temporary `HOME` and `ZDOTDIR` values for the installer and every verification command. After the test, confirm that the user's profiles and intended installation's `current` link are unchanged. Run the selected binary outside a project so a local CLI cannot take over:
 
    ```bash
    release_vp=/absolute/path/to/vp
@@ -517,7 +520,7 @@ After the release ships and announcements are approved or confirmed complete, re
 - [ ] Smoke test offered to the release manager at both levels (local sweep and fork-PR CI), with the commit count stated and a recommendation to run it when that count is above 10; if accepted, forks synced to upstream first, preview build published, and the full ecosystem-ci catalog verified via `test-pkg-pr-new-migrate` (following TESTING.md), with every failure triaged and regressions ruled out against the previous release
 - [ ] CI green; any fixes landed via separate PRs to main, merged back, and added to the changelog
 - [ ] Release PR merged; `release` environment approved by someone other than the merger; npm + GitHub release + Docker image all published
-- [ ] GitHub release notes polished (release manager approved before applying), retitled, and validated; Installation ends with the Docker usage block
+- [ ] GitHub release notes polished (release manager approved before applying), retitled, and validated; Installation ends with the Docker usage block; the prerelease flag matches the version
 - [ ] Installs verified (npm versions + latest tag, `vp upgrade`, `vp --version` output inside the ghcr Docker image)
 - [ ] Announcements handed over in chat (Discord and any requested X drafts), or confirmed complete by the release manager
 - [ ] Skill reviewed for durable learnings; any that generalize folded in and a `docs(skill)` PR proposed
