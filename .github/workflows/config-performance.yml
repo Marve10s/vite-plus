@@ -33,7 +33,7 @@ jobs:
   benchmark:
     name: Config loading benchmark
     runs-on: namespace-profile-linux-x64-default
-    timeout-minutes: 30
+    timeout-minutes: 40
     outputs:
       report-ready: ${{ steps.measure.outputs.report-ready }}
     steps:
@@ -110,6 +110,26 @@ jobs:
             args+=(--baseline "$RUNNER_TEMP/config-performance-baseline/results.json")
           fi
           node bench/config-performance/run.ts --output "$RUNNER_TEMP/config-performance" "${args[@]}"
+
+      # Temporary diagnostic for #2787: compare native revisions on one runner.
+      - name: Compare native revisions on the same runner
+        if: github.event.pull_request.number == 2787
+        env:
+          BASE_NATIVE_REVISION: 76ce17ced5f46d54ac16ad0627e714d0a8270bf5
+          HEAD_NATIVE_REVISION: 0afe9b5c9065f2210375a40e7cb45f9dce4cda2e
+          TARGET_CC: clang
+        run: |
+          git fetch origin "$BASE_NATIVE_REVISION" "$HEAD_NATIVE_REVISION"
+          # Sharing JavaScript is valid only when these inputs are identical.
+          git diff --exit-code "$BASE_NATIVE_REVISION" "$HEAD_NATIVE_REVISION" -- packages/cli/src packages/cli/bin packages/cli/build.ts packages/cli/tsdown.config.ts packages/cli/package.json packages/core packages/tools/.upstream-versions.json pnpm-lock.yaml Cargo.lock rust-toolchain.toml .cargo
+          mkdir -p "$RUNNER_TEMP/native-comparison"
+          cp packages/cli/binding/vite-plus.linux-x64-gnu.node "$RUNNER_TEMP/native-comparison/after.node"
+          git restore --source "$BASE_NATIVE_REVISION" -- crates/vp_static_config/src packages/cli/binding/src/cli/resolver.rs
+          pnpm --filter=vite-plus build-native --skip-format --target x86_64-unknown-linux-gnu --use-napi-cross
+          cp packages/cli/binding/vite-plus.linux-x64-gnu.node "$RUNNER_TEMP/native-comparison/before.node"
+          git restore --source HEAD -- crates/vp_static_config/src packages/cli/binding/src/cli/resolver.rs
+          cp "$RUNNER_TEMP/native-comparison/after.node" packages/cli/binding/vite-plus.linux-x64-gnu.node
+          node bench/config-performance/native-diagnostic.mjs --before "$RUNNER_TEMP/native-comparison/before.node" --after "$RUNNER_TEMP/native-comparison/after.node" --output "$RUNNER_TEMP/config-performance/native-comparison"
 
       - name: Upload measurements
         if: always()
