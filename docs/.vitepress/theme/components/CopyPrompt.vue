@@ -21,7 +21,11 @@ const titleId = useId();
 const dialogEl = ref<HTMLDialogElement | null>(null);
 const state = ref<'idle' | 'copied' | 'error'>('idle');
 const copyLabel = computed(() =>
-  state.value === 'copied' ? 'Copied!' : state.value === 'error' ? 'Could not copy' : 'Copy Prompt',
+  state.value === 'copied'
+    ? 'Prompt copied!'
+    : state.value === 'error'
+      ? 'Could not copy'
+      : 'Copy prompt',
 );
 const copyIcon = computed(() =>
   state.value === 'copied'
@@ -92,11 +96,11 @@ onBeforeUnmount(() => {
   <button
     type="button"
     class="button"
-    :aria-label="`${label} for setting up Vite+ with an AI assistant`"
-    @click="openView"
+    :aria-label="`${prompt ? label : copyLabel} for setting up Vite+ with an AI assistant`"
+    @click="prompt ? openView($event) : copyPrompt($event)"
   >
-    <Icon icon="lucide:eye" class="size-4" aria-hidden="true" />
-    <span>{{ label }}</span>
+    <Icon :icon="prompt ? 'lucide:eye' : copyIcon" class="size-4" aria-hidden="true" />
+    <span>{{ prompt ? label : copyLabel }}</span>
   </button>
 
   <Teleport to="body">
