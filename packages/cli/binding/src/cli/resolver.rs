@@ -38,6 +38,10 @@ impl SubcommandResolver {
         self
     }
 
+    pub(crate) fn workspace_path(&self) -> &AbsolutePath {
+        &self.workspace_path
+    }
+
     fn cli_options(&self) -> anyhow::Result<&CliOptions> {
         self.cli_options
             .as_ref()
