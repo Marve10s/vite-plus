@@ -245,6 +245,11 @@ const commandHelpDocs = {
               'Run every test file in isolation. To disable isolation, use --no-isolate (default: true)',
           },
           { label: '--globals', description: 'Inject apis globally' },
+          {
+            label: '--injectCjsGlobals',
+            description:
+              'Inject CommonJS variables (module, exports, require, __filename, __dirname) into every test module. To disable, use --no-inject-cjs-globals (default: true)',
+          },
           { label: '--dom', description: 'Mock browser API with happy-dom' },
           {
             label: '--browser <name>',
@@ -339,6 +344,11 @@ const commandHelpDocs = {
               "Retry the test specific number of times if it fails (default: 0). Use '--help --retry' for more info.",
           },
           {
+            label: '--repeats <number>',
+            description:
+              'Repeat every test a specific number of times regardless of the result (default: 0)',
+          },
+          {
             label: '--diff <path>',
             description:
               "DiffOptions object or a path to a module which exports DiffOptions object. Use '--help --diff' for more info.",
@@ -384,6 +394,16 @@ const commandHelpDocs = {
               'Maximum number of concurrent tests and suites during test file execution (default: 5)',
           },
           {
+            label: '--fsModuleCache',
+            description:
+              'Cache transformed modules on the file system and reuse them between reruns (default: false)',
+          },
+          {
+            label: '--fsModuleCachePath <path>',
+            description:
+              'Directory where the fsModuleCache is stored (default: node_modules/.vitest-cache)',
+          },
+          {
             label: '--expect',
             description:
               "Configuration options for expect() matches. Use '--help --expect' for more info.",
@@ -426,7 +446,7 @@ const commandHelpDocs = {
           {
             label: '--clearCache',
             description:
-              'Delete all Vitest caches, including experimental.fsModuleCache, without running any tests. This will reduce the performance in the subsequent test run.',
+              'Delete all Vitest caches, including the fsModuleCache, without running any tests. This will reduce the performance in the subsequent test run.',
           },
           {
             label: '--tagsFilter <expression>',
@@ -437,6 +457,11 @@ const commandHelpDocs = {
             label: '--strictTags',
             description:
               'Should Vitest throw an error if test has a tag that is not defined in the config. (default: true)',
+          },
+          {
+            label: '--sharedViteServer',
+            description:
+              "Let inline projects that don't modify the Vite config reuse the Vite server of the config that declares them. (default: true)",
           },
           {
             label: '--experimental <features>',
