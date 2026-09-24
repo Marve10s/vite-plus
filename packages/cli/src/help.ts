@@ -213,7 +213,7 @@ const commandHelpDocs = {
           {
             label: '--api [port]',
             description:
-              "Specify server port. Note if the port is already being used, Vite will automatically try the next available port so this may not be the actual port the server ends up listening on. If true will be set to 51204. Use '--help --api' for more info.",
+              "Specify server port. Note if the port is already being used, Vite will automatically try the next available port so this may not be the actual port the server ends up listening on. If true will be set to 51204 or 63315 in browser mode. Use '--help --api' for more info.",
           },
           {
             label: '--silent [value]',
@@ -237,7 +237,7 @@ const commandHelpDocs = {
           },
           {
             label: '--mode <name>',
-            description: 'Override Vite mode (default: test or benchmark)',
+            description: 'Override Vite mode (default: test)',
           },
           {
             label: '--isolate',
@@ -371,9 +371,9 @@ const commandHelpDocs = {
               "Enable typechecking alongside tests (default: false). Use '--help --typecheck' for more info.",
           },
           {
-            label: '--project <name>',
+            label: '-p, --project <name>',
             description:
-              'The name of the project to run if you are using Vitest workspace feature. This can be repeated for multiple projects: --project=1 --project=2. You can also filter projects using wildcards like --project=packages*, and exclude projects with --project=!pattern.',
+              'The name of the project to run if you are using Vitest workspace feature. This can be repeated for multiple projects: --project=1 --project=2. You can also filter projects using wildcards like --project=packages*, and exclude projects with --project=!pattern. A project runs if it matches no negated pattern and, when regular patterns are also given, matches at least one of them.',
           },
           {
             label: '--slowTestThreshold <threshold>',
@@ -416,7 +416,7 @@ const commandHelpDocs = {
           {
             label: '--attachmentsDir <dir>',
             description:
-              'The directory where attachments from context.annotate are stored in (default: .vitest-attachments)',
+              'The directory where attachments from context.annotate are stored in (default: .vitest/attachments)',
           },
           { label: '--run', description: 'Disable watch mode' },
           {
@@ -471,16 +471,6 @@ const commandHelpDocs = {
         ],
       },
       {
-        title: 'Bench Options',
-        rows: [
-          {
-            label: '--compare <filename>',
-            description: 'Benchmark output file to compare against',
-          },
-          { label: '--outputJson <filename>', description: 'Benchmark output file' },
-        ],
-      },
-      {
         title: 'List Options',
         rows: [
           {
@@ -491,7 +481,7 @@ const commandHelpDocs = {
           {
             label: '--staticParse',
             description:
-              'Parse files statically instead of running them to collect tests (default: false)',
+              'Parse files statically instead of running them to collect tests (default: true)',
           },
           {
             label: '--staticParseConcurrency <limit>',

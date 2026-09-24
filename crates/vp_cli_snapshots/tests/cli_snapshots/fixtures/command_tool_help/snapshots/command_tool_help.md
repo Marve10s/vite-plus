@@ -144,13 +144,13 @@ Options:
   --dir <path>                        Base directory to scan for the test files
   --ui                                Enable UI
   --open                              Open UI automatically (default: !process.env.CI)
-  --api [port]                        Specify server port. Note if the port is already being used, Vite will automatically try the next available port so this may not be the actual port the server ends up listening on. If true will be set to 51204. Use '--help --api' for more info.
+  --api [port]                        Specify server port. Note if the port is already being used, Vite will automatically try the next available port so this may not be the actual port the server ends up listening on. If true will be set to 51204 or 63315 in browser mode. Use '--help --api' for more info.
   --silent [value]                    Silent console output from tests. Use 'passed-only' to see logs from failing tests only.
   --hideSkippedTests                  Hide logs for skipped tests
   --reporter <name>                   Specify reporters (default, agent, minimal, blob, verbose, dot, json, tap, tap-flat, junit, tree, hanging-process, github-actions)
   --outputFile <filename/-s>          Write test results to a file when supporter reporter is also specified, use cac's dot notation for individual outputs of multiple reporters (example: --outputFile.tap=./tap.txt)
   --coverage                          Enable coverage report. Use '--help --coverage' for more info.
-  --mode <name>                       Override Vite mode (default: test or benchmark)
+  --mode <name>                       Override Vite mode (default: test)
   --isolate                           Run every test file in isolation. To disable isolation, use --no-isolate (default: true)
   --globals                           Inject apis globally
   --injectCjsGlobals                  Inject CommonJS variables (module, exports, require, __filename, __dirname) into every test module. To disable, use --no-inject-cjs-globals (default: true)
@@ -182,7 +182,7 @@ Options:
   --expandSnapshotDiff                Show full diff when snapshot fails
   --disableConsoleIntercept           Disable automatic interception of console logging (default: false)
   --typecheck                         Enable typechecking alongside tests (default: false). Use '--help --typecheck' for more info.
-  --project <name>                    The name of the project to run if you are using Vitest workspace feature. This can be repeated for multiple projects: --project=1 --project=2. You can also filter projects using wildcards like --project=packages*, and exclude projects with --project=!pattern.
+  -p, --project <name>                The name of the project to run if you are using Vitest workspace feature. This can be repeated for multiple projects: --project=1 --project=2. You can also filter projects using wildcards like --project=packages*, and exclude projects with --project=!pattern. A project runs if it matches no negated pattern and, when regular patterns are also given, matches at least one of them.
   --slowTestThreshold <threshold>     Threshold in milliseconds for a test or suite to be considered slow (default: 300)
   --teardownTimeout <timeout>         Default timeout of a teardown function in milliseconds (default: 10000)
   --cache                             Enable cache. Use '--help --cache' for more info.
@@ -192,7 +192,7 @@ Options:
   --expect                            Configuration options for expect() matches. Use '--help --expect' for more info.
   --printConsoleTrace                 Always print console stack traces
   --includeTaskLocation               Collect test and suite locations in the location property
-  --attachmentsDir <dir>              The directory where attachments from context.annotate are stored in (default: .vitest-attachments)
+  --attachmentsDir <dir>              The directory where attachments from context.annotate are stored in (default: .vitest/attachments)
   --run                               Disable watch mode
   --no-color                          Removes colors from the console output (default: true)
   --clearScreen                       Clear terminal screen when re-running tests during watch mode (default: true)
@@ -206,14 +206,10 @@ Options:
   --experimental <features>           Experimental features.. Use '--help --experimental' for more info.
   -h, --help                          Display this message
 
-Bench Options:
-  --compare <filename>     Benchmark output file to compare against
-  --outputJson <filename>  Benchmark output file
-
 List Options:
   --json [true/path]                Print collected tests as JSON or write to a file (Default: false)
   --filesOnly                       Print only test files with out the test cases
-  --staticParse                     Parse files statically instead of running them to collect tests (default: false)
+  --staticParse                     Parse files statically instead of running them to collect tests (default: true)
   --staticParseConcurrency <limit>  How many tests to process at the same time (default: os.availableParallelism())
 
 Examples:
